@@ -9,7 +9,8 @@ an FPU, on GFOpenUp's SDL 2 through sdl12-compat.
 Two ships, one keyboard: shoot the other ship five times and it blows
 up; three wins take the game.
 
-Status: built in the os32-gcc16-open6 stove.
+Status: built in the os32-gcc16-open6 stove; played in the AmiCradle lab
+(t3-blues-20261104): both ships fly and fire, a screenshot, Esc quits.
 
 
 What you need
