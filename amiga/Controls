@@ -1,0 +1,24 @@
+Spacewar: the keys
+==================
+
+Two ships, one keyboard. Shoot the other ship: five hits and it blows
+up, three wins and the game is yours. Hold fire to shoot as fast as the
+guns allow.
+
+                 Blue (left)       Red (right)
+  Up             Cursor Up         T
+  Down           Cursor Down       G
+  Left           Cursor Left       F
+  Right          Cursor Right      H
+  Fire           Return            S
+
+  P              a screenshot, screenshot.bmp in the drawer
+  Esc            quit
+
+On a PC keyboard blue fires with Right Ctrl; an Amiga keyboard has one
+Ctrl, so the Amiga port uses Return.
+
+The keys every AmiCradle game has on Right Amiga (GFOpenUp's SDL2.module):
+Right Amiga + F window or full screen, + P pause, + Q quit, + M free the
+mouse pointer, + S a screenshot in the drawer's Screenshots, and Help
+shows this file.

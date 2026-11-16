@@ -1,0 +1,83 @@
+# Spacewar (spacewar-sdl 0.3) for GFOS (AmigaOS 3.2 with GFOpenUp),
+# 68040/68060 + FPU, on GFOpenUp's SDL 2 (LIBS:GFOpenGPU/SDL2.module)
+# through the kit's sdl12-compat, linked into the program.
+#
+#   make -f amiga/Makefile.amigaos -j4 SW=/path/to/spacewar-0.3 [STOVE=...]
+#
+# SW is upstream Spacewar 0.3 with amiga/patches applied
+# (package/build-amiga.sh fetches, checks and patches it). STOVE is a
+# GFOpenAmigaGCC 16.2.0-open6 stove.
+#
+# Output: build/amigaos/Spacewar/ (the drawer), build/amigaos/Spacewar.info
+# and Install-Spacewar beside them.
+
+SW      ?= ../spacewar-0.3
+STOVE   ?= $(HOME)/AmiCradle/stoves/os32-gcc16-open6
+PREFIX  ?= $(STOVE)/prefix
+SDL2KIT ?= $(PREFIX)/m68k-amigaos
+CC      = $(PREFIX)/bin/m68k-amigaos-gcc
+CXX     = $(PREFIX)/bin/m68k-amigaos-g++
+STRIP   = $(PREFIX)/bin/m68k-amigaos-strip
+CPU     ?= -m68040 -m68881
+# -fno-tree-loop-distribute-patterns: GCC 16's loop miscompile (the kit's
+# sdl2-config gives it for GCC 16 too). -Wno-write-strings: upstream (2003)
+# passes string literals as char *.
+OPT     ?= -O2 -fomit-frame-pointer -fno-tree-loop-distribute-patterns
+INC     = -Iamiga -I$(SW)/src -I$(SDL2KIT)/include/SDL -I$(SDL2KIT)/include
+CFLAGS  = -noixemul $(OPT) $(CPU) -D__amigaos__ $(INC)
+CXXFLAGS= $(CFLAGS) -Wno-write-strings
+LDFLAGS = -noixemul $(CPU)
+# libSDL.a is sdl12-compat with SDL 2's own members inside
+LIBS    = -L$(SDL2KIT)/lib -lSDL -lSDL2 -lm
+
+BUILD   = build/amigaos
+OBJDIR  = $(BUILD)/obj
+OUT     = $(BUILD)/Spacewar
+PROG    = Spacewar
+
+# upstream's gfx_opengl.cpp is two empty functions behind <GL/gl.h>;
+# amiga/gfx_nogl.cpp is the same two without it
+GAME    = ship input update gfx gfx_sdl util laser player textbar main
+OBJS    = $(GAME:%=$(OBJDIR)/sw/%.o) $(OBJDIR)/amiga/gfx_nogl.o $(OBJDIR)/amiga/amiga_start.o
+
+all: $(OUT)/$(PROG) package
+
+$(BUILD)/$(PROG).debug: $(OBJS)
+	@mkdir -p $(BUILD)
+	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+
+$(OUT)/$(PROG): $(BUILD)/$(PROG).debug
+	@mkdir -p $(OUT)
+	$(STRIP) -o $@ $<
+
+package: $(OUT)/$(PROG) AMIGA_PORT.md amiga/Licences.txt amiga/Controls
+	mkdir -p $(OUT)/images $(OUT)/Licences
+	cp $(SW)/bin/images/*.bmp $(OUT)/images/
+	cp amiga/Controls $(OUT)/Controls
+	cp AMIGA_PORT.md $(OUT)/ReadMe
+	cp $(SW)/readme.txt $(OUT)/ReadMe-Spacewar
+	cp $(SW)/copying.txt $(OUT)/COPYING.txt
+	cp amiga/Licences.txt $(OUT)/Licences.txt
+	cp $(SDL2KIT)/share/GFOpenGPU-SDK/Licences/sdl12-compat.txt $(OUT)/Licences/
+	cp amiga/icons/Spacewar.info amiga/icons/ReadMe.info $(OUT)/
+	for f in ReadMe-Spacewar COPYING.txt Licences.txt Controls; do \
+	    cp amiga/icons/ReadMe.info $(OUT)/$$f.info; done
+	cp amiga/icons/Spacewar-drawer.info $(BUILD)/Spacewar.info
+	cp amiga/Install-Spacewar amiga/Install-Spacewar.info $(BUILD)/
+
+$(OBJDIR)/sw/%.o: $(SW)/src/%.cpp $(wildcard $(SW)/src/*.h)
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+$(OBJDIR)/amiga/%.o: amiga/%.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -I$(SW)/src -c -o $@ $<
+
+$(OBJDIR)/amiga/%.o: amiga/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+clean:
+	rm -rf $(BUILD)
+
+.PHONY: all package clean
