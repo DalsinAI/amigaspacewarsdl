@@ -29,7 +29,7 @@ CXXFLAGS= $(CFLAGS) -Wno-write-strings
 LDFLAGS = -noixemul $(CPU)
 # libSDL.a is sdl12-compat with SDL 2's own members inside; open6's
 # libstdc++ needs -lpthread -latomic
-LIBS    = -L$(SDL2KIT)/lib -lSDL -lSDL2 -lpthread -latomic -lm
+LIBS    = -L$(SDL2KIT)/lib -lSDL -lpthread -latomic -lm
 
 BUILD   = build/amigaos
 OBJDIR  = $(BUILD)/obj
