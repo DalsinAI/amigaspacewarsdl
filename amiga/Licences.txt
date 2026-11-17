@@ -1,0 +1,12 @@
+Spacewar: licences
+==================
+
+The game: Spacewar 0.3 by Sijmen Mulder (2003), from
+https://sourceforge.net/projects/spacewar-sdl/.
+
+- The program and its pictures (images/) are under the GNU General
+  Public License, version 2 or later (COPYING.txt).
+- sdl12-compat is linked into the program: Licences/sdl12-compat.txt.
+- The Amiga port's own files (amiga/, AMIGA_PORT.md, package/, tools/,
+  tests/) are GPL 2 or later, like the game; the GlowIcon art is The
+  AmiCradle Team's own.

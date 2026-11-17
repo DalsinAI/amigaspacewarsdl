@@ -1,0 +1,79 @@
+diff -ru a/src/gfx_sdl.cpp b/src/gfx_sdl.cpp
+--- a/src/gfx_sdl.cpp	2026-11-16 21:58:48.402167427 +0000
++++ b/src/gfx_sdl.cpp	2026-11-16 21:58:48.420160445 +0000
+@@ -40,7 +40,12 @@
+ 	SDL_Rect src;
+ 	SDL_Rect dest;
+ 
++#ifdef __amigaos__
++    // GFOS: a window on the Workbench, in its own depth
++    screen = SDL_SetVideoMode( 800, 600, 0, SDL_SWSURFACE );
++#else
+     screen = SDL_SetVideoMode( 800, 600, 16, SDL_FULLSCREEN | SDL_HWACCEL | SDL_HWSURFACE | SDL_DOUBLEBUF );
++#endif
+     if ( !screen )
+         util.Error( "GFX::sdlInit()", SDL_GetError() );
+ 
+diff -ru a/src/input.cpp b/src/input.cpp
+--- a/src/input.cpp	2026-11-16 21:58:48.402178161 +0000
++++ b/src/input.cpp	2026-11-16 21:58:48.420278959 +0000
+@@ -31,7 +31,12 @@
+ #define BLUE_DOWN	SDLK_DOWN
+ #define BLUE_LEFT	SDLK_LEFT
+ #define BLUE_RIGHT	SDLK_RIGHT
++#ifdef __amigaos__
++// GFOS: an Amiga keyboard has one Ctrl, on the left; Return is beside the cursor keys
++#define BLUE_FIRE	SDLK_RETURN
++#else
+ #define BLUE_FIRE	SDLK_RCTRL
++#endif
+ 
+ PlayerInput::PlayerInput()
+ {
+diff -ru a/src/main.cpp b/src/main.cpp
+--- a/src/main.cpp	2026-11-16 21:58:48.402187813 +0000
++++ b/src/main.cpp	2026-11-16 21:58:48.420362913 +0000
+@@ -23,6 +23,9 @@
+ #include "update.h"
+ #include "input.h"
+ #include "textbar.h"
++#ifdef __amigaos__
++#include "amiga_start.h"
++#endif
+ 
+ #define SUBSYSTEM	SDL
+ 
+@@ -42,6 +45,11 @@
+     Player red;
+     Player blue;
+ 
++#ifdef __amigaos__
++    // GFOS: images/ is read from the game's own drawer
++    amiga_setup();
++#endif
++
+     if ( SDL_Init( SDL_INIT_VIDEO ) != 0 )
+         util.Error( "main()", SDL_GetError() );
+ 
+diff -ru a/src/util.cpp b/src/util.cpp
+--- a/src/util.cpp	2026-11-16 21:58:48.402249543 +0000
++++ b/src/util.cpp	2026-11-16 21:58:48.419757337 +0000
+@@ -14,7 +14,7 @@
+ //  along with Foobar; if not, write to the Free Software
+ //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ 
+-#include <iostream.h>
++#include <iostream>
+ #include <stdlib.h>
+ #include "SDL.h"
+ #include "util.h"
+@@ -24,7 +24,8 @@
+ #ifdef WIN32
+ #include <windows.h>
+ #else
+-#include <iostream.h>
++#include <iostream>
++using namespace std;
+ #endif
+ 
+ void Util::Error( char *caller, char *message )

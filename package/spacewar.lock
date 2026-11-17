@@ -1,0 +1,6 @@
+# The upstream source the port builds: fetched by package/build-amiga.sh
+# and checked against this sha256 sum, never kept in this repository.
+SPACEWAR_URL=https://downloads.sourceforge.net/project/spacewar-sdl/spacewar-sdl/spacewar-0.3/spacewar-0.3.tar.bz2
+SPACEWAR_SHA256=3e65c203834353ccf0fc38d4dcfb0721e5220d165192ea33d77062d5c9ec1596
+SPACEWAR_VERSION=0.3
+PORT_VERSION=0.3-gfos1

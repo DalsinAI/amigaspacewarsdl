@@ -1,0 +1,14 @@
+{
+  "name": "Spacewar",
+  "version": "0.3-gfos1",
+  "drawer": "Spacewar",
+  "program": "Spacewar",
+  "cpu": "68040",
+  "fpu": true,
+  "space": 2400000,
+  "modules": ["SDL2.module"],
+  "keep": [],
+  "parent": "Work:Games",
+  "badge": "icons/art/spacewar.png",
+  "script": "Install-Spacewar"
+}
